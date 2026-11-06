@@ -73,7 +73,7 @@ jobs:
               assert any('user=tbK9jl4AAAAJ' in link for link in page.links), name
               assert any(link.endswith('/junteng88716710') for link in page.links), name
               for text in ('natural language processing', 'machine learning', 'MINIMAX', 'Tencent WXG', 'Shanghai AI Lab', 'Zhiyuan Honor Scholarship', 'Professor Junxian He', 'Zifei Shan', 'Prof. Yu Cheng', 'B.Eng.', 'Ph.D. in Computer Science', 'June 2024', 'February 2025', 'LLM reasoning and reinforcement learning', 'vision-language models', 'LLM truthfulness and interpretability'):
-                  assert text.lower() in page.text.join(' ').lower(), text
+                  assert text.lower() in ' '.join(page.text).lower(), text
               combined = ' '.join(page.text)
               for text in ('Your Name', 'Red Brick University', 'Paper Title Number', 'GitHub University'):
                   assert text not in combined, text

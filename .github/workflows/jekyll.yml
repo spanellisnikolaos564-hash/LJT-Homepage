@@ -40,7 +40,7 @@ jobs:
         run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
-      - name: Validate remembered information
+      - name: Validate generated content
         if: ${{ success() }}
         run: |
           python3 - <<'PY'
@@ -68,7 +68,8 @@ jobs:
                   if self.in_title:
                       self.article_titles.append(data.strip())
 
-          for name in ('index.html', 'publications/index.html', 'about/index.html'):
+          # The legacy /about/ URL is a redirect to the home page, not a content page.
+          for name in ('index.html', 'publications/index.html'):
               page = Page()
               page.feed(Path('_site', name).read_text())
               assert len(page.article_titles) == 6, (name, page.article_titles)
@@ -79,10 +80,11 @@ jobs:
               combined = ' '.join(page.text)
               for text in ('Your Name', 'Red Brick University', 'Paper Title Number', 'GitHub University'):
                   assert text not in combined, text
-              if name != 'publications/index.html':
+              if name == 'index.html':
                   for text in ('natural language processing', 'machine learning', 'MINIMAX', 'Tencent WXG', 'Shanghai AI Lab', 'Zhiyuan Honor Scholarship', 'Professor Junxian He', 'Zifei Shan', 'Prof. Yu Cheng', 'B.Eng.', 'Ph.D. in Computer Science', 'June 2024', 'February 2025', 'LLM reasoning and reinforcement learning', 'vision-language models', 'LLM truthfulness and interpretability'):
                       assert text.lower() in combined.lower(), (name, text)
               print(f'Validated {name}: six publications and remembered contact links.')
+          print('Build and content checks passed.')
           PY
       - name: Upload artifact
         if: ${{ !inputs.build_only && success() }}
